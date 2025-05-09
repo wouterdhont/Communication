@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Arthur",
+        "age": 24,
+        "user_id": 9000,
+        "role": "admin",
+        "totp_secret": "KW7LOVXLUXUZ363TLTQF6BOGXU2E6AOZ",
+        "has_drivers_license": true,
+        "able_to_drive": true
+    },
+    {
+        "name": "gAAAAABoHO8KZm5dEvBRA8P3eb6jurS-5GL4wDXB011o301wUDyEoYhGsA4tUfWcWB99E2FdppwKZOnDxGe8dIw4ik9rNWRJCw==",
+        "age": 22,
+        "user_id": 5112002,
+        "role": "gAAAAABoHO8KEopI8oo8Un9Yvi_dgtb-Wy3DT6TU-LCrrWmoSCx9BZCM2tA7wpNjB88d74OfL2XMUb97ucNSQGfwQtJyetxWIw==",
+        "totp_secret": "gAAAAABoHO8KY_RjLUWBwpejQMRZ8zV11LqPltZ29tiiek7RSuLT0tn07Aw3jNkoYpuYXcvkUpU1tIGtk-THgY04vxYWRYbjdg==",
+        "has_drivers_license": true,
+        "able_to_drive": true
+    },
+    {
+        "name": "gAAAAABoHPCGFuwrdipH5lC-090U1v5DUJ5GPFJU6OnHgZmx1zCtyUHpr-mTCgpgkUPGJiiel32LB8MyquYCbYeMN0rFZWP7Uw==",
+        "age": 50,
+        "user_id": 1450,
+        "role": "gAAAAABoHPCq26P0KHcEI86BXV_1aiWhiwLB1Hxn2zmbrYfwesQOLSX-nqd5JxAuUuZ8-k3BPuWHLIl25R24YxpoMhBR_0liEw==",
+        "totp_secret": "gAAAAABoHPCGWmVbPK-l9gjBabNACES0jx5Yu5Kb9z7avq3SW70kQAcqjmE-WagdWltr5msVqHyszBiae-8ArR9rQVScD24lvA==",
+        "has_drivers_license": true,
+        "able_to_drive": true
+    },
+    {
+        "name": "gAAAAABoHQQxTgSwq1CAvz6AvM63oZD_HD7wNKphL512ZbNe2knybPojjGgdyZmiYvioi2oLbs0diF9bZeDu6MTcLVYZ4MGbhg==",
+        "age": 30,
+        "user_id": 112,
+        "role": "gAAAAABoHQRDe_NqYQnON6zNSK2MlXGpOcVotgQgxrBR0-FMUfLPe3BWHS4NQDzpDZe4X2p45Oea0vvsHLNqkyDZURp4OD1Xtg==",
+        "totp_secret": "gAAAAABoHQQxaN1CXICaxa9PRZ8IatlN-aNfolqU6MqvGUDIAVHwH1HdaZ7M96oc7sJ7PXwKpPACQ9Nzey-RDC0L5mriGHoiPw==",
+        "has_drivers_license": true,
+        "able_to_drive": true
+    },
+    {
+        "name": "gAAAAABoHbUoB-cXQP-x_XH9mbaYTTBv0yjoQq0k4iaQj533UmRDOtluObirOt7s9-T7s2CLcG93HKTta1HDdL-WHyEz9DPcyA==",
+        "age": 7,
+        "user_id": 17,
+        "role": "gAAAAABoHbUoI9FPiKuYRKd6LUzaURryh1huTKjUserxM0BMUbVt5IQOY2GJCUrhVWSUT0p7PGlLG4KSgAmfGlmOsh7A09SpJQ==",
+        "has_drivers_license": true,
+        "able_to_drive": true
+    },
+    {
+        "name": "gAAAAABoHbcsFGyQqqemP0CB_YBNjy91on8EKGVk8BQt_EAc0B3mZ3oxhPEKGioPWhQoAyZRDEeDWNPIryIVh0xoFxZN0W6PVQ==",
+        "age": 25,
+        "user_id": 1234,
+        "role": "gAAAAABoHbcsyqvb9o7zbZH9HdOYJzDxHL9KIpus9OL4Siyf7oK2kLQhbNJuiCyTkpNIdwTJ8sPXgc4_eOT1bXpyBmi-5FYe5Q==",
+        "has_drivers_license": true,
+        "able_to_drive": true,
+        "is_owner": {
+            "car_id": 1
+        }
+    }
+]

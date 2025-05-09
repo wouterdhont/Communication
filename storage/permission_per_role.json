@@ -1,0 +1,6 @@
+{
+  "user": ["unlock_car", "lock_car","start_car", "share_access"],
+  "authority": ["revoke_license", "reinstate_license", "view_license_status"],
+  "admin": ["create_user", "delete_user", "assign_roles", "manage_cars", "view_logs"],
+  "car_distributor": ["register_car", "assign_ownership", "view_car_inventory", "transfer_ownership", "set_license_plate"]
+}

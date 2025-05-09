@@ -1,0 +1,29 @@
+[
+    {
+        "id": 2,
+        "make": "Audi",
+        "model": "A3",
+        "year": 2024,
+        "license_plate": "gAAAAABoGdYjgnk4OZ-f03bZv3ft7TfzOKW56VMBy-vl0b_sgU9qIGBxY5lln1m6Ijawa1vFZGHmFsZa3zbiU0JMYDBXCQ9WFg==",
+        "owner_id": "gAAAAABoGdZpN9CJPOvgdeHvOD1dAY7CNjKnPdR8HZFly0_iWWpwSnhTsiD7IJm3C93t2Gz2Aykbr1ed34Wjtf8ARDslOAZDKQ==",
+        "locked": "gAAAAABoGdZp0kd0VIyzyrACY-VIelqe6Qk-oe4Btwkk7GnWBGhQx0KGyPB1yKGcJucv1BK1QclveS59Pu7K9hE5ZhGStRAfZA=="
+    },
+    {
+        "id": 1,
+        "make": "Peugeot",
+        "model": "3008",
+        "year": 2008,
+        "license_plate": "gAAAAABoHFOYWh2kThSJ-9UGqJoyjpbW9XL6KXKa9i14j3hXFEdAveEBqtjF9g2spFGWhE63kc_Cw1dwycZh9RnWBCDdqhIIww==",
+        "owner_id": "gAAAAABoHbfXJoMvj5z5CvjI-I7CzdILQ8ky_bkLJOnGSLcHw9cH36YP7DMzOKZR1PjvcmrY168rw2ot_jc2wFni-ilUcINv9w==",
+        "locked": "gAAAAABoHbji36HMQiNvlJka-XzqZnldGFrlq4n5qgp53vUAZYnb_RH2PeMHgmZLxlbLPb2Pp3YvG-ucYfpOPNiDf2A5IRxpOA=="
+    },
+    {
+        "id": 3,
+        "make": "Peugeot",
+        "model": "7",
+        "year": 2020,
+        "license_plate": "gAAAAABoHPnS-qGVHkjU6z4s3H2cP7bvmdgyAvZuGQCcNDGFhRVt2EKBBj2gvQDS7N1Tw_U8esRAnMOSLSKFrcoEroeNRD3XUA==",
+        "owner_id": "gAAAAABoHPnSVYkGeyB5ZGiDIpGIcXkB6cdJGJ0mzNe3aaFJT52EoBY9oZ-90fBCzledfgCMFkKR-2QW5zVEQQ7Cv6EOQwodxA==",
+        "locked": "gAAAAABoHPnSOBZuIGSR2w_z1nCuYKdz-TApO48HQ9XgJSyhGLFq6o2U-R9PoSXncyt8ZFsNloBl7TsOOnm9qK7_lm-xmjmH_w=="
+    }
+]
