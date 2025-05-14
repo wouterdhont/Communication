@@ -7,9 +7,9 @@ authority_id = int(input("Enter your ID: "))
 
 print("Welcome Authority, what do you want to do?")
 print("Some actions you can perform: ")
-print("(1) revoke a license")
-print("(2) reinstate a license")
-print("(3) view a license status")
+print("(1) Revoke a license")
+print("(2) Reinstate a license")
+print("(3) View a license status")
 print("(0) Exit")
 
 choice = int(input("Enter the number of the action you want to perform: "))

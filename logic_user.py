@@ -1,8 +1,10 @@
 import json
 import sys
 import os
-from loggers import log_message # type: ignore
+from loggers import log_message, setup_logging # type: ignore
 from cryptography.fernet import Fernet # type: ignore
+setup_logging()
+
 
 # -------------------------- Encryption Setup ------------------------------
 

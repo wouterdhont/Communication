@@ -5,12 +5,15 @@ from Crypto.PublicKey import RSA # type: ignore
 from Crypto.Cipher import PKCS1_OAEP # type: ignore
 import hmac, hashlib
 from config import HMAC_KEY
+from loggers import setup_logging
+os.system('cls' if os.name == 'nt' else 'clear')
+setup_logging()
+os.system('cls' if os.name == 'nt' else 'clear')
 
 # Parse command-line arguments for car ID and port (for simplicity, hardcoded here)
 car_id = "car2"
 HOST = 'localhost'
 CAR_PORT = 6002
-os.system('cls' if os.name == 'nt' else 'clear')
 
 def recvall(sock, n):
     data = bytearray()

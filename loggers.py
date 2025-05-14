@@ -2,36 +2,31 @@ import logging, os
 from datetime import datetime
 from cryptography.fernet import Fernet # type: ignore
 
-global _key, _fernet
-
-
 def setup_logging():
-    os.makedirs("/logs", exist_ok=True)
+    log_dir = os.path.join(os.path.dirname(__file__), "logs")
+    os.makedirs(log_dir, exist_ok=True)
 
-    log_filename = datetime.now().strftime("/logs/%Y-%m-%d.log")
+    log_filename = os.path.join(log_dir, datetime.now().strftime("%Y-%m-%d.log"))
 
     logging.basicConfig(
         filename=log_filename,
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
     )
-    
-    print("Logging setup complete.")
+
+    print(f"Logging setup complete. Log file: {log_filename}")
     return log_filename
 
 def init_logging():
-    base_dir = os.path.dirname(__file__)
-    key_path = os.path.dirname(os.path.abspath(__file__)) + "/secrets/encryption.key"
-
+    key_path = os.path.join(os.path.dirname(__file__), "secrets", "encryption.key")
     with open(key_path, "rb") as f:
-        _key = f.read()
-        _fernet = Fernet(_key)
-    return  _key, _fernet
+        key = f.read()
+        fernet = Fernet(key)
+    return key, fernet
 
 def log_message(message: str, level: str = "INFO"):
-    _key, _fernet = init_logging()
-
-    encrypted_message = _fernet.encrypt(message.encode()).decode()
+    _, fernet = init_logging()
+    encrypted_message = fernet.encrypt(message.encode()).decode()
 
     if level == "INFO":
         logging.info(encrypted_message)

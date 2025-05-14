@@ -1,7 +1,9 @@
 import json
 import os
 from cryptography.fernet import Fernet # type: ignore
-from loggers import log_message, init_logging
+from loggers import log_message, init_logging, setup_logging
+setup_logging()
+
 
 # -------------------------- Encryption Setup ------------------------------
 key_path = os.path.dirname(os.path.abspath(__file__)) + "/secrets/encryption.key"
@@ -25,13 +27,12 @@ permissions_per_role_path = os.path.dirname(os.path.abspath(__file__)) + "/stora
 def view_logs(admin_id: int, key: str, day: str = None):
     _key, _fernet_local = init_logging()
 
-    print("VIEW_LOGS: adimin id --", admin_id)
+    print("VIEW_LOGS: admin id --", admin_id)
     if not is_role_allowed(admin_id, "view_logs"):
-        print("is role allowed --", is_role_allowed(admin_id, "view_logs"))
         print("Access denied: role is not allowed to view logs")
         return False
 
-    logs_dir = "/logs"
+    logs_dir = os.path.join(os.path.dirname(__file__), "logs")
     if not os.path.exists(logs_dir):
         print("No logs directory found.")
         return
@@ -47,15 +48,19 @@ def view_logs(admin_id: int, key: str, day: str = None):
             with open(os.path.join(logs_dir, log_file), "r") as f:
                 for line in f:
                     try:
-                        parts = line.split(" - ", 2)
+                        parts = line.strip().split(" - ", 2)
+                        if len(parts) < 3:
+                            print("Skipping malformed line:", line)
+                            continue
                         timestamp, level, encrypted_message = parts
-                        decrypted_message = _fernet_local.decrypt(encrypted_message).decode()
+                        decrypted_message = _fernet_local.decrypt(encrypted_message.encode()).decode()
                         print(f"{timestamp} - {level} - {decrypted_message}")
                     except Exception as e:
                         print(f"Error decrypting log message: {e}")
     else:
         print("Key is incorrect, access denied")
         return False
+
 
 
 def create_user(admin_id: int, new_user_data: dict):

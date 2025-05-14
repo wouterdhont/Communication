@@ -7,7 +7,14 @@ from logic_admin import view_logs
 from datetime import datetime, timedelta
 from two_factor import *
 import hmac, hashlib
-from config import HMAC_KEY
+from config import HMAC_KEY 
+from Crypto.Cipher import AES # type: ignore
+from Crypto.Util.Padding import pad, unpad # type: ignore
+from Crypto.Random import get_random_bytes # type: ignore
+setup_logging()
+os.system('cls' if os.name == 'nt' else 'clear')
+
+
 
 # just some general info
 SERVER_HOST = 'localhost'
@@ -81,6 +88,7 @@ def register():
     time.sleep(3)
     return user_id
 
+
 def login():
     # clear screen, print some information and get user info
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -114,6 +122,7 @@ def login():
 
     return user_id
 
+
 def un_lock(car_id, command, user_id):
     timestamp = datetime.now().isoformat()
 
@@ -128,6 +137,7 @@ def un_lock(car_id, command, user_id):
     result = send_to_server(new_user)
     print(result.get("message"))
 
+
 def un_share_car(user_id, target_id, car_id, command):
     request = {
         "user_id": user_id,
@@ -139,6 +149,7 @@ def un_share_car(user_id, target_id, car_id, command):
 
     result = send_to_server(request)
     print(result.get("message"))
+
 
 def authenticate_face_id():
     print("Face ID Authentication System")
@@ -206,40 +217,62 @@ def authenticate_face_id():
     cv2.destroyAllWindows()
     return None
 
-def send_to_server(data: dict):
-    """Encrypts and sends a JSON request to the server, then decrypts and returns the response."""
-    try:
-        # Encrypt request
-        enc_request = server_cipher.encrypt(json.dumps(data).encode())
-        tag = hmac.new(HMAC_KEY, enc_request, hashlib.sha256).digest()
 
-        # Send to server
+def send_to_server(data: dict):
+    try:
+        aes_key = get_random_bytes(16)
+
+        # Step 1: Encrypt user's public key with AES
+        with open(f"secrets/device{count}_public.pem", "rb") as f:
+            pub_key_data = f.read()
+        aes_cipher = AES.new(aes_key, AES.MODE_CBC)
+        enc_user_pub = aes_cipher.encrypt(pad(pub_key_data, AES.block_size))
+
+        # Step 2: Encrypt AES key with server's initial public key
+        server_pub_key = RSA.import_key(open("secrets/server_public.pem", "rb").read())
+        server_cipher_init = PKCS1_OAEP.new(server_pub_key)
+        enc_aes_key = server_cipher_init.encrypt(aes_key)
+
+        # Step 3: Connect to server and send key exchange payload
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((SERVER_HOST, SERVER_PORT))
-            # Send: 4‑byte tag length, tag, 4‑byte payload length, payload
-            sock.sendall(len(tag).to_bytes(4,'big') + tag
-                         + len(enc_request).to_bytes(4,'big') + enc_request)
 
-            # Receive and decrypt response
-            # First read response tag
-            n_tag = int.from_bytes(sock.recv(4),'big')
+            sock.sendall(len(enc_aes_key).to_bytes(4, 'big') + enc_aes_key)
+            sock.sendall(len(enc_user_pub).to_bytes(4, 'big') + enc_user_pub + aes_cipher.iv)
+
+            # Step 4: Receive and decrypt server's new public key
+            server_key_len = int.from_bytes(sock.recv(4), 'big')
+            enc_server_pub = sock.recv(server_key_len)
+            iv = sock.recv(16)
+            aes_cipher_dec = AES.new(aes_key, AES.MODE_CBC, iv)
+            server_pub_json = unpad(aes_cipher_dec.decrypt(enc_server_pub), AES.block_size)
+            server_key = RSA.import_key(server_pub_json)
+            server_cipher = PKCS1_OAEP.new(server_key)
+
+            # Step 5: Encrypt and send request
+            enc_request = server_cipher.encrypt(json.dumps(data).encode())
+            tag = hmac.new(HMAC_KEY, enc_request, hashlib.sha256).digest()
+
+            sock.sendall(len(tag).to_bytes(4, 'big') + tag
+                         + len(enc_request).to_bytes(4, 'big') + enc_request)
+
+            # Step 6: Receive and verify response
+            n_tag = int.from_bytes(sock.recv(4), 'big')
             resp_tag = sock.recv(n_tag)
-            # Then read ciphertext
-            n_data = int.from_bytes(sock.recv(4),'big')
+            n_data = int.from_bytes(sock.recv(4), 'big')
             enc_response = sock.recv(n_data)
-            # Verify integrity before decrypting
-            if not hmac.compare_digest(resp_tag,
-                    hmac.new(HMAC_KEY, enc_response, hashlib.sha256).digest()):
+
+            if not hmac.compare_digest(resp_tag, hmac.new(HMAC_KEY, enc_response, hashlib.sha256).digest()):
                 raise ValueError("Response HMAC check failed")
+
             response = user_cipher.decrypt(enc_response).decode()
             return json.loads(response)
 
     except Exception as e:
-        print("[Client] Error communicating with server:", e)
+        print("Error communicating with server:", e)
         return None
-##########################################################################################################################
-##########################################################################################################################
-##########################################################################################################################
+
+
 # This is just some startup code
 os.system('cls' if os.name == 'nt' else 'clear')
 print('***********************************************')
@@ -271,8 +304,8 @@ user_private = RSA.import_key(open(user_priv_file, "rb").read())
 user_cipher = PKCS1_OAEP.new(user_private)
 
 # Load server's public key
-server_pub_key = RSA.import_key(open("secrets/server_public.pem", "rb").read())
-server_cipher = PKCS1_OAEP.new(server_pub_key)
+#server_pub_key = RSA.import_key(open("secrets/server_public.pem", "rb").read())
+#server_cipher = PKCS1_OAEP.new(server_pub_key)
 
 while True:
     action = input('\nDo you want to register a new account or login? \n').strip().lower()
@@ -325,5 +358,3 @@ while True:
     else:
         print("Exiting the application. Goodbye!")
         break
-
-

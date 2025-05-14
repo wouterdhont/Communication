@@ -1,7 +1,9 @@
 import json
 import os
-from loggers import log_message # type: ignore
+from loggers import log_message, setup_logging # type: ignore
 from cryptography.fernet import Fernet # type: ignore
+setup_logging()
+
 
 # -------------------------- Encryption Setup ------------------------------
 
@@ -46,9 +48,9 @@ def register_car(distributor_id: int, car_data: dict):
     
     
 
-    # car_data.setdefault("license_plate", "")
-    # car_data.setdefault("owner_id", None)
-    # car_data.setdefault("locked", True)
+        car_data.setdefault("license_plate", "")
+        car_data.setdefault("owner_id", None)
+        car_data.setdefault("locked", True)
 
         # Encrypt sensitive fields
         car_data["license_plate"] = encrypt(car_data["license_plate"])
@@ -77,41 +79,41 @@ def assign_ownership(distributor_id: int, user_id: int, car_id: int):
     
     
 
-    #try:
-    with open(users_storage_path, "r") as f:
-        drivers = json.load(f)
+    try:
+        with open(users_storage_path, "r") as f:
+            drivers = json.load(f)
 
-    with open(cars_storage_path, "r") as f:
-        cars = json.load(f)
+        with open(cars_storage_path, "r") as f:
+            cars = json.load(f)
 
-    
+        
 
-    driver = next((d for d in drivers if d["user_id"] == user_id), None)
-    car = next((c for c in cars if c["id"] == car_id), None)
+        driver = next((d for d in drivers if d["user_id"] == user_id), None)
+        car = next((c for c in cars if c["id"] == car_id), None)
 
-    if not driver or not car:
-        log_message(f"Distributor {distributor_id} attempted to assign ownership of car {car_id}, but driver or car not found", "ERROR")
+        if not driver or not car:
+            log_message(f"Distributor {distributor_id} attempted to assign ownership of car {car_id}, but driver or car not found", "ERROR")
+            return False
+        for d in drivers:
+            if d.get("is_owner") and d["is_owner"].get("car_id") == car_id:
+                d.pop("is_owner", None)
+
+
+        driver["is_owner"] = {"car_id": car_id}
+        car["owner_id"] = encrypt(user_id)
+
+        with open(users_storage_path, "w") as f:
+            json.dump(drivers, f, indent=4)
+
+        with open(cars_storage_path, "w") as f:
+            json.dump(cars, f, indent=4)
+
+        log_message(f"Distributor {distributor_id} assigned ownership of car {car_id} to user {user_id}", "INFO")
+        return True
+
+    except Exception as e:
+        log_message(f"Error assigning ownership of car {car_id} to user {user_id} by distributor {distributor_id}: {e}", "ERROR")
         return False
-    for d in drivers:
-        if d.get("is_owner") and d["is_owner"].get("car_id") == car_id:
-            d.pop("is_owner", None)
-
-
-    driver["is_owner"] = {"car_id": car_id}
-    car["owner_id"] = encrypt(user_id)
-
-    with open(users_storage_path, "w") as f:
-        json.dump(drivers, f, indent=4)
-
-    with open(cars_storage_path, "w") as f:
-        json.dump(cars, f, indent=4)
-
-    log_message(f"Distributor {distributor_id} assigned ownership of car {car_id} to user {user_id}", "INFO")
-    return True
-
-    # except Exception as e:
-    #     log_message(f"Error assigning ownership of car {car_id} to user {user_id} by distributor {distributor_id}: {e}", "ERROR")
-    #     return False
 
 
 def view_car_inventory(distributor_id: int):

@@ -4,26 +4,26 @@
         "make": "Audi",
         "model": "A3",
         "year": 2024,
-        "license_plate": "gAAAAABoGdYjgnk4OZ-f03bZv3ft7TfzOKW56VMBy-vl0b_sgU9qIGBxY5lln1m6Ijawa1vFZGHmFsZa3zbiU0JMYDBXCQ9WFg==",
-        "owner_id": "gAAAAABoI2B8vsfOM72wJjQLifoQAyrFlH3oCkiOK5dw-4zYF_ALKPBKwY9CLWvFpPpfgtOR_FPpNfedIQL34dLXBsMIhKPZEA==",
-        "locked": "gAAAAABoGdZp0kd0VIyzyrACY-VIelqe6Qk-oe4Btwkk7GnWBGhQx0KGyPB1yKGcJucv1BK1QclveS59Pu7K9hE5ZhGStRAfZA=="
+        "license_plate": "gAAAAABoJOxcDVrqWShICBs0AupeC5HC0njM0Ljpket7aikutaqciS6BNxCH81DUwMYnAxtux4vVyICtpJTynX1-_EiI57EM8Q==",
+        "owner_id": "gAAAAABoJO8V0kPIF9RJY4tKwPzwMi0yBYeWGyyrrw-XikccIQVfP0zWtLI08_QySAaI3N3a3cd7m3wBvlciVt305IKS4Zc8iA==",
+        "locked": "gAAAAABoJO8jYK2dBiYE8OwEZVnGc4Oq2YhEOohV9GAmo4rqdzxG-AthtEVTA2vajTjxy0grb37R3V9y-pdL6-NQr571AZxTlg=="
     },
     {
         "id": 1,
         "make": "Peugeot",
         "model": "3008",
         "year": 2008,
-        "license_plate": "gAAAAABoHFOYWh2kThSJ-9UGqJoyjpbW9XL6KXKa9i14j3hXFEdAveEBqtjF9g2spFGWhE63kc_Cw1dwycZh9RnWBCDdqhIIww==",
-        "owner_id": "gAAAAABoJMMEGxQGpMCAlWt3R5qvDo1jJBFPObi2rwYOSj_FE9JUj6W5htbDFWXm_akWy28odDkRUw_l84qOrQH48DoWFJazLg==",
-        "locked": "gAAAAABoJMMlpGe1TuSM0pLnUCkXcIqcqSjQCjCL--RjmXwQfq47vRy4GsGI7tmD2b3YFpbTnA3mJ8JOS1_AvV7pd4EJj1Q5-g=="
+        "license_plate": "gAAAAABoJOxopQ7wEPvCVMpqyQFjoir6XuVr0Otz_prNB2EWKBTOrSLfDZ7vMHwnxbNl0HjKtpsJFW5ccF6xCIq4VfS7sQc-pg==",
+        "owner_id": "gAAAAABoJO0eMjZhjJ1ovrXOMz05vDVP3BcnCG2LjMjf388yOJe_KJ3IHcwuXrZgpq0i4tixlS7vaYX2kb77UH2Bydb5mNLkaA==",
+        "locked": "gAAAAABoJO06lmyrSddaobZrEpbDgaeVA5OQm7ccnGIfT-oKnvLGGggEh4YtOg23ovKEomKRjewCbN5D-ldcJcXsBjck0XR0BA=="
     },
     {
         "id": 3,
         "make": "Peugeot",
         "model": "7",
         "year": 2020,
-        "license_plate": "gAAAAABoHPnS-qGVHkjU6z4s3H2cP7bvmdgyAvZuGQCcNDGFhRVt2EKBBj2gvQDS7N1Tw_U8esRAnMOSLSKFrcoEroeNRD3XUA==",
-        "owner_id": "gAAAAABoHPnSVYkGeyB5ZGiDIpGIcXkB6cdJGJ0mzNe3aaFJT52EoBY9oZ-90fBCzledfgCMFkKR-2QW5zVEQQ7Cv6EOQwodxA==",
+        "license_plate": "gAAAAABoJOx1ng9HkJGBiZReM3Tm58sPA261WYrbLhEWDC4ICyBoDYvucY_bU_ZIkQnqktqroEFvbm6UUJW9m0NQn28Ddo2ZeA==",
+        "owner_id": "gAAAAABoJOw11p-JhxYzeJ_vMlVyzLoSm0ivrJOUCudG_8Q7pan1I9J_z1ZTSiFrTZ2IUS09W9PxxJddgK6NGYn0dwg6LJAkfw==",
         "locked": "gAAAAABoHPnSOBZuIGSR2w_z1nCuYKdz-TApO48HQ9XgJSyhGLFq6o2U-R9PoSXncyt8ZFsNloBl7TsOOnm9qK7_lm-xmjmH_w=="
     }
 ]

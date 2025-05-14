@@ -1,17 +1,15 @@
 from logic_car_distributor import *
 import os
 
-os.system('cls' if os.name == 'nt' else 'clear')
-
 print("Welcome Car Distributor, what do you want to do?")
 print("Some actions you can perform: ")
-print("(1) register a car")
-print("(2) assign ownership")
-print("(3) view car inventory")
-print("(4) set license plate")
+print("(1) Register a car")
+print("(2) Assign ownership")
+print("(3) View car inventory")
+print("(4) Set license plate")
 print("(0) Exit")
 car_distributor_id = int(input("Enter your id: "))
-
+os.system('cls' if os.name == 'nt' else 'clear')
 
 
 

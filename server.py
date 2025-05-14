@@ -1,5 +1,3 @@
-#server.py
-
 import socket, os, json, base64, cv2, base64 # type: ignore
 import numpy as np
 import hmac, hashlib
@@ -7,11 +5,18 @@ from Crypto.PublicKey import RSA # type: ignore
 from Crypto.Cipher import PKCS1_OAEP # type: ignore
 from logic_admin import create_user
 from logic_user import *
-from loggers import setup_logging, log_message
+from loggers import *
 from datetime import datetime, timedelta
 from config import HMAC_KEY
 from two_factor import *
+from Crypto.Cipher import AES # type: ignore
+from Crypto.Util.Padding import pad, unpad # type: ignore
+from Crypto.Random import get_random_bytes # type: ignore
 os.system('cls' if os.name == 'nt' else 'clear')
+setup_logging()
+init_logging()
+os.system('cls' if os.name == 'nt' else 'clear')
+
 
 # boiler plate code
 # ----------------------------------------------------------------------------------------------------
@@ -39,6 +44,7 @@ server_sock.bind((HOST, CLIENT_PORT))
 server_sock.listen()  # start listening
 # ----------------------------------------------------------------------------------------------------
 
+
 def recvall(sock, n):
     data = bytearray()
     while len(data) < n:
@@ -48,10 +54,12 @@ def recvall(sock, n):
         data.extend(packet)
     return bytes(data)
 
+
 def send_with_hmac(sock, ciphertext: bytes):
     tag = hmac.new(HMAC_KEY, ciphertext, hashlib.sha256).digest()            # HMAC over ciphertext :contentReference[oaicite:6]{index=6}
     sock.sendall(len(tag).to_bytes(4,'big') + tag
                  + len(ciphertext).to_bytes(4,'big') + ciphertext)
+
 
 def recv_with_hmac(sock):
     tlen = int.from_bytes(recvall(sock,4),'big')
@@ -64,28 +72,49 @@ def recv_with_hmac(sock):
     return ctxt
 
 
-
 #actual receive, process and send
 while True:
-    # receive from user
-    client_conn, addr = server_sock.accept()  # accept user connection
+    client_conn, addr = server_sock.accept()
     print(f"\n[Server] Connection from {addr}")
-        # 1) Read tag + ciphertext
-    n_tag = int.from_bytes(client_conn.recv(4),'big')
-    tag   = client_conn.recv(n_tag)
-    n_ct  = int.from_bytes(client_conn.recv(4),'big')
-    enc_request = client_conn.recv(n_ct)
-    # 2) Verify HMAC before decrypting :contentReference[oaicite:5]{index=5}
-    if not hmac.compare_digest(tag, hmac.new(HMAC_KEY, enc_request, hashlib.sha256).digest()):
-        print("[Server] HMAC verification failed; dropping") 
-        client_conn.close()
-        continue
+
     try:
-        # Decrypt request with server private key
+        # Step 1: Receive encrypted AES key (RSA encrypted)
+        rsa_key_len = int.from_bytes(recvall(client_conn, 4), 'big')
+        enc_aes_key = recvall(client_conn, rsa_key_len)
+        aes_key = server_cipher.decrypt(enc_aes_key)
+
+        # Step 2: Receive encrypted user's RSA public key (AES encrypted)
+        enc_pub_len = int.from_bytes(recvall(client_conn, 4), 'big')
+        enc_user_pub = recvall(client_conn, enc_pub_len)
+        iv = recvall(client_conn, 16)
+        aes_cipher = AES.new(aes_key, AES.MODE_CBC, iv)
+        user_pub_pem = unpad(aes_cipher.decrypt(enc_user_pub), AES.block_size)
+        user_pub_key = RSA.import_key(user_pub_pem)
+        user_cipher = PKCS1_OAEP.new(user_pub_key)
+        print("[Server] Received and decrypted user's RSA public key.")
+
+        # Step 3: Send server's public key back (AES encrypted)
+        server_pub_pem = open("secrets/server_public.pem", "rb").read()
+        aes_cipher_out = AES.new(aes_key, AES.MODE_CBC)
+        enc_server_pub = aes_cipher_out.encrypt(pad(server_pub_pem, AES.block_size))
+        client_conn.sendall(len(enc_server_pub).to_bytes(4, 'big') + enc_server_pub + aes_cipher_out.iv)
+
+        # Step 4: Proceed to receive encrypted request using RSA + HMAC (as before)
+        n_tag = int.from_bytes(recvall(client_conn, 4), 'big')
+        tag = recvall(client_conn, n_tag)
+        n_ct = int.from_bytes(recvall(client_conn, 4), 'big')
+        enc_request = recvall(client_conn, n_ct)
+
+        if not hmac.compare_digest(tag, hmac.new(HMAC_KEY, enc_request, hashlib.sha256).digest()):
+            print("[Server] HMAC verification failed; dropping")
+            client_conn.close()
+            continue
+
         request_json = server_cipher.decrypt(enc_request).decode()
         request = json.loads(request_json)
+
     except Exception as e:
-        print("[Server] Decryption failed or invalid message.")
+        print(f"[Server] Error during key exchange or decryption: {e}")
         client_conn.close()
         continue
 
@@ -206,12 +235,7 @@ while True:
 
     # ------------------------------------------------------------------------------------------
 
-    # Send result back to user, encrypted with user's public key
-    nr = request.get("nr")
-    user_pub_file = f"secrets/device{nr}_public.pem"
-    if user_pub_file:
-        user_pub_key = RSA.import_key(open(user_pub_file, "rb").read())
-        user_cipher = PKCS1_OAEP.new(user_pub_key)
+    if user_cipher:
         enc_result = user_cipher.encrypt(json.dumps(result).encode())
         # Compute HMAC on the ciphertext before send
         resp_tag = hmac.new(HMAC_KEY, enc_result, hashlib.sha256).digest()
