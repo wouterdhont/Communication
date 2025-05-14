@@ -5,6 +5,7 @@ from Crypto.PublicKey import RSA # type: ignore
 from Crypto.Cipher import PKCS1_OAEP # type: ignore
 import hmac, hashlib
 from config import HMAC_KEY
+os.system('cls' if os.name == 'nt' else 'clear')
 
 # Parse command-line arguments for car ID and port (for simplicity, hardcoded here)
 car_id = "car1"

@@ -88,17 +88,14 @@ def assign_ownership(distributor_id: int, user_id: int, car_id: int):
 
     driver = next((d for d in drivers if d["user_id"] == user_id), None)
     car = next((c for c in cars if c["id"] == car_id), None)
-    print("hallo")
 
     if not driver or not car:
         log_message(f"Distributor {distributor_id} attempted to assign ownership of car {car_id}, but driver or car not found", "ERROR")
         return False
-    print("dag")
     for d in drivers:
         if d.get("is_owner") and d["is_owner"].get("car_id") == car_id:
             d.pop("is_owner", None)
 
-    print("jow")
 
     driver["is_owner"] = {"car_id": car_id}
     car["owner_id"] = encrypt(user_id)

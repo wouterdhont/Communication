@@ -10,6 +10,7 @@ from config import HMAC_KEY
 car_id = "car2"
 HOST = 'localhost'
 CAR_PORT = 6002
+os.system('cls' if os.name == 'nt' else 'clear')
 
 def recvall(sock, n):
     data = bytearray()

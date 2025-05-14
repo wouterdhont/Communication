@@ -16,10 +16,6 @@ COUNTER_FILE = "storage/counter.json"
 user_id = None
 IMAGE_DIR_PATH = "faces"
 
-
-##########################################################################################################################
-##########################################################################################################################
-##########################################################################################################################
 def register():
     # clear screen, print some information and get user info
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -27,8 +23,16 @@ def register():
     print('************** REGISTRATION PAGE **************')
     print('***********************************************\n')
     name = input("What's your name? ").strip()
-    age = int(input("How old are you? ").strip())
-    user_id = int(input("What's your id number? ").strip())
+    age = input("How old are you? ").strip()
+    while not age.isdigit():
+        age = input("Enter an integer as your age: ").strip()
+    age = int(age)
+    user_id = input("What is your user id? ").strip()
+    while not user_id.isdigit():
+        user_id = input("Enter an integer as your user_id: ").strip()
+    user_id = int(user_id)
+
+    # get totp for the new user
     totp = pyotp.TOTP(pyotp.random_base32())
     secret = totp.secret
     uri = totp.provisioning_uri("Driver", issuer_name="SecureApp")
@@ -43,22 +47,12 @@ def register():
         "totp_secret": new_totp
     }
 
-    add_user(new_user)
-
-    new_user = {
-        "name": name,
-        "age": age,
-        "user_id": user_id,
-        "nr": count,
-        "type": "register"
-    }
-
     result = send_to_server(new_user)
     print(result.get("message"))
     
+    # ask if face id is wanted
     while True:
         action = input('\nDo you want to add Face ID Authentication? ').strip().lower()
-        
         if action == "yes" or action == "no":
             break
         else:
@@ -86,7 +80,6 @@ def register():
     print("\n \nRegistration done succesfully, you will shortly be redirected.")
     time.sleep(3)
     return user_id
-    
 
 def login():
     # clear screen, print some information and get user info
@@ -94,23 +87,36 @@ def login():
     print('**********************************************')
     print('***************** LOGIN PAGE *****************')
     print('**********************************************\n')
-    choice = input("Do you want to login with face-id (1) or 2-factor authentication (2)? ").strip()
-    if choice == "1":
+
+    while True:
+        choice = int(input("Do you want to login with face-id (1) or 2-factor authentication (2)? ").strip())
+        if choice == 1 or choice == 2:
+            break
+        else:
+            print("Invalid choice, please type '1' or '2'. Try again.")
+
+    if choice == 1:
         print("\nLet's start the Face ID Authentication.")
         user_id = authenticate_face_id()
-    elif choice == "2":
+    elif choice == 2:
         print("\nLet's start the 2-Factor Authentication.")
-        user_id = authenticate_two_factor()
+        print("2-Factor Authentication System")
+        otp = input("Enter the 6-digit OTP: ")
+        new_user = {
+            "nr": count,
+            "type": "login",
+            "otp": otp
+        }
+        user_id = send_to_server(new_user).get("user_id")
 
     print("\nLogged in successfully, you will shortly be redirected.")
     time.sleep(3)
 
     return user_id
-##########################################################################################################################
-##########################################################################################################################
-##########################################################################################################################
+
 def un_lock(car_id, command, user_id):
     timestamp = datetime.now().isoformat()
+
     new_user = {
         "user_id": user_id,
         "car_id": car_id,
@@ -122,25 +128,46 @@ def un_lock(car_id, command, user_id):
     result = send_to_server(new_user)
     print(result.get("message"))
 
+def un_share_car(user_id, target_id, car_id, command):
+    request = {
+        "user_id": user_id,
+        "target_id": target_id,
+        "car_id": car_id,
+        "nr": count,
+        "type": command
+    }
+
+    result = send_to_server(request)
+    print(result.get("message"))
+
 def authenticate_face_id():
     print("Face ID Authentication System")
 
     known_encodings = []
     known_ids = []
 
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    IMAGE_DIR_PATH = os.path.join(SCRIPT_DIR, "faces")
+    print(f"Loading images from: {IMAGE_DIR_PATH}")
     # Load and encode all known faces
     for filename in os.listdir(IMAGE_DIR_PATH):
         if filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png"):
-            driver_id = os.path.splitext(filename)[0]  # e.g. "12574257" from "12574257.jpg"
+            driver_id = os.path.splitext(filename)[0]
             image_path = os.path.join(IMAGE_DIR_PATH, filename)
 
+            print(f"Processing file: {filename}")
             image = face_recognition.load_image_file(image_path)
             encodings = face_recognition.face_encodings(image)
 
-            if encodings:  # make sure a face was found
+            if encodings:
+                print(f"Face encoding found for {filename}")
                 known_encodings.append(encodings[0])
                 known_ids.append(driver_id)
+            else:
+                print(f"No face found in {filename}")
 
+    print(f"Loaded {len(known_encodings)} known face encodings.")
+    
     # Start webcam
     video_capture = cv2.VideoCapture(0)
 
@@ -155,6 +182,10 @@ def authenticate_face_id():
             matches = face_recognition.compare_faces(known_encodings, face_encoding)
             face_distances = face_recognition.face_distance(known_encodings, face_encoding)
 
+            if len(face_distances) == 0:
+                print("Face distances are empty; skipping frame.")
+                continue
+            
             best_match_index = np.argmin(face_distances)
 
             if matches[best_match_index]:
@@ -174,9 +205,7 @@ def authenticate_face_id():
     video_capture.release()
     cv2.destroyAllWindows()
     return None
-##########################################################################################################################
-##########################################################################################################################
-##########################################################################################################################
+
 def send_to_server(data: dict):
     """Encrypts and sends a JSON request to the server, then decrypts and returns the response."""
     try:
@@ -266,12 +295,35 @@ print('***********************************************')
 print('**************** (UN)LOCK PAGE ****************')
 print('***********************************************')
 print(f"Your id: {user_id} \n")
+print("What action do you want to perform?")
+print("(1) Unlock a car")
+print("(2) Lock a car")
+print("(3) Share access of a car")
+print("(4) Remove access of a car")
+print("(0) Exit the application")
+
 while True:
     while True:
-        command = input("Do you want to lock or unlock a car? ")
-        if command == "lock" or command == "unlock":
+        command = int(input("\nMake your choice: "))
+        if command >= 0 and command <= 4:
             break
-    car_id = int(input(f"Wich car do you want to {command}? "))
-    un_lock(car_id, command, user_id)
+
+    if command == 1:
+        car_id = int(input(f"Wich car do you want to unlock? "))
+        un_lock(car_id, "unlock", user_id)
+    elif command == 2:
+        car_id = int(input(f"Wich car do you want to lock? "))
+        un_lock(car_id, "lock", user_id)
+    elif command == 3:
+        car_id = int(input(f"Wich car do you want to share? "))
+        target_id = int(input(f"With who do you want to share? "))
+        un_share_car(user_id, target_id, car_id, "share access")
+    elif command == 4:
+        car_id = int(input(f"Wich car do you want to delete access from? "))
+        target_id = int(input(f"Whose access do you want to delete? "))
+        un_share_car(user_id, target_id, car_id, "delete access")
+    else:
+        print("Exiting the application. Goodbye!")
+        break
 
 

@@ -107,8 +107,8 @@ def share_access(owner_id: int, target_user_id: int, car_id: int):
         with open(users_storage_path, "r") as f:
             users = json.load(f)
 
-        owner = next((u for u in users if u["id"] == owner_id), None)
-        target_user = next((u for u in users if u["id"] == target_user_id), None)
+        owner = next((u for u in users if u["user_id"] == owner_id), None)
+        target_user = next((u for u in users if u["user_id"] == target_user_id), None)
 
         if not owner or not target_user:
             log_message(f"Share access failed: invalid user {owner_id} or target user {target_user_id}", "ERROR")
@@ -135,6 +135,50 @@ def share_access(owner_id: int, target_user_id: int, car_id: int):
 
     except Exception as e:
         log_message(f"Error sharing access from user {owner_id} to user {target_user_id} for car {car_id}: {e}", "ERROR")
+        return False
+
+def remove_access(owner_id: int, target_user_id: int, car_id: int):
+    if not is_role_allowed(owner_id, "remove_access"):
+        log_message(f"User {owner_id} denied removing access to car {car_id} from user {target_user_id}: insufficient role", "ERROR")
+        return False
+
+    try:
+        with open(users_storage_path, "r") as f:
+            users = json.load(f)
+
+        owner = next((u for u in users if u["user_id"] == owner_id), None)
+        target_user = next((u for u in users if u["user_id"] == target_user_id), None)
+
+        if not owner or not target_user:
+            log_message(f"Remove access failed: invalid user {owner_id} or target user {target_user_id}", "ERROR")
+            return False
+
+        if not (owner.get("is_owner") and owner["is_owner"].get("car_id") == car_id):
+            log_message(f"User {owner_id} denied removing access to car {car_id}: not the car owner", "ERROR")
+            return False
+
+        if "has_access_to" not in target_user or not target_user["has_access_to"]:
+            log_message(f"User {target_user_id} has no access to car {car_id} to remove", "INFO")
+            return True  # Nothing to remove
+
+        # Filter out the car_id from the access list
+        original_length = len(target_user["has_access_to"])
+        target_user["has_access_to"] = [
+            access for access in target_user["has_access_to"] if access["car_id"] != car_id
+        ]
+
+        if len(target_user["has_access_to"]) == original_length:
+            log_message(f"User {target_user_id} did not have access to car {car_id} (nothing changed)", "INFO")
+            return True
+
+        with open(users_storage_path, "w") as f:
+            json.dump(users, f, indent=4)
+
+        log_message(f"User {owner_id} removed access to car {car_id} from user {target_user_id}", "INFO")
+        return True
+
+    except Exception as e:
+        log_message(f"Error removing access from user {target_user_id} for car {car_id} by owner {owner_id}: {e}", "ERROR")
         return False
 
 # -------------------------- Role Permission Check -------------------------

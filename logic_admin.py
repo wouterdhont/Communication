@@ -71,7 +71,7 @@ def create_user(admin_id: int, new_user_data: dict):
         return False
 
     # Encrypt sensitive fields
-    #new_user_data["totp_secret"] = encrypt(new_user_data["totp_secret"])
+    new_user_data["totp_secret"] = encrypt(new_user_data["totp_secret"])
     new_user_data["role"] = encrypt(new_user_data.get("role", "user"))
     if "name" in new_user_data:
         new_user_data["name"] = encrypt(new_user_data["name"])

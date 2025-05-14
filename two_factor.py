@@ -26,13 +26,12 @@ def decrypt(value: str) -> str:
 
 # -------------------------- Paths -----------------------------------------
 
-users_storage_path = os.path.dirname(os.path.abspath(__file__)) + "/storage_local/users.json"
+users_storage_path = os.path.dirname(os.path.abspath(__file__)) + "/storage/users.json"
 
 # -------------------------- 2FA Functions ---------------------------------
 
-def authenticate_two_factor():
-    print("2-Factor Authentication System")
-    otp = input("Enter the 6-digit OTP: ")
+def authenticate_two_factor(otp):
+    
 
     # Load drivers
     with open(users_storage_path, "r") as f:
@@ -54,15 +53,15 @@ def authenticate_two_factor():
                     name = decrypt(name)
                 except: pass
 
-                print(f"Authentication successful: {name} (ID: {driver['user_id']})")
+                print(f"[Server] Authentication successful: {name} (ID: {driver['user_id']})")
                 log_message(f"User {name} (ID: {driver['user_id']}) authenticated successfully", "INFO")
                 return driver["user_id"]
-        except Exception as e:
-            print(f"Error verifying OTP for user ID {driver['user_id']}: {e}")
-            log_message(f"Error verifying OTP for user ID {driver['user_id']}: {e}", "ERROR")
+        except: pass
+            
 
 
-    print("Authentication failed: OTP not recognized")
+    print(f"Error verifying OTP for user ID {driver['user_id']}")
+    log_message(f"Error verifying OTP for user ID {driver['user_id']}", "ERROR")
     return None
 
 
@@ -95,4 +94,4 @@ def add_user(info):
     with open(users_storage_path, "w") as f:
         json.dump(users, f, indent=4)
 
-    print(f"User {info.get('name', 'Unknown')} added successfully")
+    print(f"User {info.get('user_id', 'Unknown')} added successfully")

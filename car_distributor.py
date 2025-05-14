@@ -9,6 +9,7 @@ print("(1) register a car")
 print("(2) assign ownership")
 print("(3) view car inventory")
 print("(4) set license plate")
+print("(0) Exit")
 car_distributor_id = int(input("Enter your id: "))
 
 

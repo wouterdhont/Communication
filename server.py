@@ -10,6 +10,8 @@ from logic_user import *
 from loggers import setup_logging, log_message
 from datetime import datetime, timedelta
 from config import HMAC_KEY
+from two_factor import *
+os.system('cls' if os.name == 'nt' else 'clear')
 
 # boiler plate code
 # ----------------------------------------------------------------------------------------------------
@@ -62,11 +64,12 @@ def recv_with_hmac(sock):
     return ctxt
 
 
+
 #actual receive, process and send
 while True:
     # receive from user
     client_conn, addr = server_sock.accept()  # accept user connection
-    print(f"[Server] Connection from {addr}")
+    print(f"\n[Server] Connection from {addr}")
         # 1) Read tag + ciphertext
     n_tag = int.from_bytes(client_conn.recv(4),'big')
     tag   = client_conn.recv(n_tag)
@@ -98,6 +101,7 @@ while True:
             "role": "user",
             "has_drivers_license": True,
             "able_to_drive": True,
+            "totp_secret": request.get("totp_secret")
         }
         
         # call create_user() from Authorisation/admin_logic
@@ -106,8 +110,25 @@ while True:
         result = {"status": succes, "message": "Registration succeeded"}
 
     elif type == "login":
-        print("User logs in ...")
-        result = {"message": "You are now logged in"}
+        result = {"user_id": authenticate_two_factor(request.get("otp"))}
+
+    elif type == "share access":
+        print(f'[Server] Received request from user {request.get("user_id")} to share car {request.get("car_id")} with user {request.get("target_id")}')
+        succes = share_access(request.get("user_id"), request.get("target_id"), request.get("car_id"))
+        if succes:
+            print(f'[Server] Authorized request from user {request.get("user_id")} to share car {request.get("car_id")} with user {request.get("target_id")}')
+        else:
+            print(f'[Server] Denied request from user {request.get("user_id")} to share car {request.get("car_id")} with user {request.get("target_id")}')
+        result = {"status": succes, "message": "Car shared"}
+
+    elif type == "delete access":
+        print(f'[Server] Received request from user {request.get("user_id")} to remove acces to car {request.get("car_id")} of user {request.get("target_id")}')
+        succes = remove_access(request.get("user_id"), request.get("target_id"), request.get("car_id"))
+        if succes:
+            print(f'[Server] Authorized request from user {request.get("user_id")} to remove acces to car {request.get("car_id")} of user {request.get("target_id")}')
+        else:
+            print(f'[Server] Denied request from user {request.get("user_id")} to remove acces to car {request.get("car_id")} of user {request.get("target_id")}')
+        result = {"status": succes, "message": "Car access removed"}
 
     elif type == "lock" or type == "unlock":
         timestamp_str = request.get("timestamp")
@@ -117,13 +138,13 @@ while True:
                 current_time = datetime.now()
                 time_diff = abs(current_time - timestamp)
                 if time_diff <= timedelta(seconds=30):
-                    print("timestamp OK")
+                    print(f"[Server] Timestamp check OK, proceeding")
                 else:
-                    print("timestamp not ok")
+                    print("[Server] Timestamp check not OK")
             except ValueError:
                 print("Invalid timestamp format")
         else:
-            print("timestamp missing or null")
+            print("[Server] Timestamp missing or null")
         
         if type == "lock":
            succes = lock_car(request.get("user_id"), request.get("car_id"))
@@ -132,7 +153,7 @@ while True:
         
         if succes:
             # send command to car
-            print("User authorized to (un)lock the car, sending command to car")
+            print(f'[Server] User {request.get("user_id")} authorized to {type} car {request.get("car_id")}, sending command to car')
 
             try:
                 # Encrypt request
@@ -167,7 +188,7 @@ while True:
                 print("[Client] Error communicating with server:", e)
                 response = {"message": "fail"}
 
-            print(f"Car {request.get('car_id')} successfully (un)locked sending confirmation to user")
+            print(f"[Server] Car {request.get('car_id')} successfully {type}ed sending confirmation to user {request.get('user_id')}")
 
             try:
                 if response.get("message") == "success":
