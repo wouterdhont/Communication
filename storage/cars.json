@@ -5,25 +5,16 @@
         "model": "A3",
         "year": 2024,
         "license_plate": "gAAAAABoJOxcDVrqWShICBs0AupeC5HC0njM0Ljpket7aikutaqciS6BNxCH81DUwMYnAxtux4vVyICtpJTynX1-_EiI57EM8Q==",
-        "owner_id": "gAAAAABoJO8V0kPIF9RJY4tKwPzwMi0yBYeWGyyrrw-XikccIQVfP0zWtLI08_QySAaI3N3a3cd7m3wBvlciVt305IKS4Zc8iA==",
-        "locked": "gAAAAABoJO8jYK2dBiYE8OwEZVnGc4Oq2YhEOohV9GAmo4rqdzxG-AthtEVTA2vajTjxy0grb37R3V9y-pdL6-NQr571AZxTlg=="
+        "owner_id": "gAAAAABoJwV87ta5J9TRh6lGwG8VkHHuh7fqyoEsNYjg4bVcOuUvsNtQcvad8Apy05x1e8ghtypUS9bjnCd2mETBKHE8P2nVxA==",
+        "locked": "gAAAAABoJwXQ3EoqPzyoMBp7u20Ow_czCXczJetdZ1AIqP5cQZyffD9trYlPX9Nx_oP8bdq-V9PvEe9dtYCrFp7GHM4hKfwJwg=="
     },
     {
         "id": 1,
         "make": "Peugeot",
         "model": "3008",
         "year": 2008,
-        "license_plate": "gAAAAABoJOxopQ7wEPvCVMpqyQFjoir6XuVr0Otz_prNB2EWKBTOrSLfDZ7vMHwnxbNl0HjKtpsJFW5ccF6xCIq4VfS7sQc-pg==",
+        "license_plate": "gAAAAABoJwUIr1miMc2300wff1vY9GaR9emKnvhcT8Rqz1wWXYbP-eT_r6ecbdSLJ76_MdMVwQOoQI8wa-wFOENx0J5ug3sTvg==",
         "owner_id": "gAAAAABoJO0eMjZhjJ1ovrXOMz05vDVP3BcnCG2LjMjf388yOJe_KJ3IHcwuXrZgpq0i4tixlS7vaYX2kb77UH2Bydb5mNLkaA==",
-        "locked": "gAAAAABoJO06lmyrSddaobZrEpbDgaeVA5OQm7ccnGIfT-oKnvLGGggEh4YtOg23ovKEomKRjewCbN5D-ldcJcXsBjck0XR0BA=="
-    },
-    {
-        "id": 3,
-        "make": "Peugeot",
-        "model": "7",
-        "year": 2020,
-        "license_plate": "gAAAAABoJOx1ng9HkJGBiZReM3Tm58sPA261WYrbLhEWDC4ICyBoDYvucY_bU_ZIkQnqktqroEFvbm6UUJW9m0NQn28Ddo2ZeA==",
-        "owner_id": "gAAAAABoJOw11p-JhxYzeJ_vMlVyzLoSm0ivrJOUCudG_8Q7pan1I9J_z1ZTSiFrTZ2IUS09W9PxxJddgK6NGYn0dwg6LJAkfw==",
-        "locked": "gAAAAABoHPnSOBZuIGSR2w_z1nCuYKdz-TApO48HQ9XgJSyhGLFq6o2U-R9PoSXncyt8ZFsNloBl7TsOOnm9qK7_lm-xmjmH_w=="
+        "locked": "gAAAAABoJwVnNDHU8U9xtI5JB2KgxeP6EimH77vvJEvSNfJUm-HX8XP5E1h9MYkOWkSGa36Yy2GDBnm5-zGajFxGeIqjKFKa1A=="
     }
 ]

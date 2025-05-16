@@ -139,10 +139,38 @@ while True:
         result = {"status": succes, "message": "Registration succeeded"}
 
     elif type == "login":
+        timestamp_str = request.get("timestamp")
+        if timestamp_str:
+            try:
+                timestamp = datetime.fromisoformat(timestamp_str)  # Convert string back to datetime
+                current_time = datetime.now()
+                time_diff = abs(current_time - timestamp)
+                if time_diff <= timedelta(seconds=30):
+                    print(f"[Server] Timestamp check OK, proceeding")
+                else:
+                    print("[Server] Timestamp check not OK")
+            except ValueError:
+                print("Invalid timestamp format")
+        else:
+            print("[Server] Timestamp missing or null")
         result = {"user_id": authenticate_two_factor(request.get("otp"))}
 
     elif type == "share access":
         print(f'[Server] Received request from user {request.get("user_id")} to share car {request.get("car_id")} with user {request.get("target_id")}')
+        timestamp_str = request.get("timestamp")
+        if timestamp_str:
+            try:
+                timestamp = datetime.fromisoformat(timestamp_str)  # Convert string back to datetime
+                current_time = datetime.now()
+                time_diff = abs(current_time - timestamp)
+                if time_diff <= timedelta(seconds=30):
+                    print(f"[Server] Timestamp check OK, proceeding")
+                else:
+                    print("[Server] Timestamp check not OK")
+            except ValueError:
+                print("Invalid timestamp format")
+        else:
+            print("[Server] Timestamp missing or null")
         succes = share_access(request.get("user_id"), request.get("target_id"), request.get("car_id"))
         if succes:
             print(f'[Server] Authorized request from user {request.get("user_id")} to share car {request.get("car_id")} with user {request.get("target_id")}')
@@ -152,6 +180,20 @@ while True:
 
     elif type == "delete access":
         print(f'[Server] Received request from user {request.get("user_id")} to remove acces to car {request.get("car_id")} of user {request.get("target_id")}')
+        timestamp_str = request.get("timestamp")
+        if timestamp_str:
+            try:
+                timestamp = datetime.fromisoformat(timestamp_str)  # Convert string back to datetime
+                current_time = datetime.now()
+                time_diff = abs(current_time - timestamp)
+                if time_diff <= timedelta(seconds=30):
+                    print(f"[Server] Timestamp check OK, proceeding")
+                else:
+                    print("[Server] Timestamp check not OK")
+            except ValueError:
+                print("Invalid timestamp format")
+        else:
+            print("[Server] Timestamp missing or null")
         succes = remove_access(request.get("user_id"), request.get("target_id"), request.get("car_id"))
         if succes:
             print(f'[Server] Authorized request from user {request.get("user_id")} to remove acces to car {request.get("car_id")} of user {request.get("target_id")}')

@@ -12,8 +12,6 @@ print("(2) Reinstate a license")
 print("(3) View a license status")
 print("(0) Exit")
 
-choice = int(input("Enter the number of the action you want to perform: "))
-
 
 
 while True:

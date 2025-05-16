@@ -31,11 +31,11 @@
         "age": 22,
         "user_id": 123,
         "role": "gAAAAABoJOuc6rgyjBN1ZfDvz4Y-sapK0XO_VBBQ3iJCNcMYvc2W__YaGTjBu_o2sWHPxJ4X6-V04QsGVvYzFnkF2WHtxqC5FA==",
-        "has_drivers_license": false,
-        "able_to_drive": false,
+        "has_drivers_license": true,
+        "able_to_drive": true,
         "totp_secret": "gAAAAABoJOucx8iuDyKNauH2cE3l7sQp_6_6b_e9fhKUgUNonBmId-_npAz0bzmZhGPJs3KbjnRsMuV6-gPvAJymxmrIh9RsANM7D70jK1505R42IBUS-DqhZNnAzmQF4SjKsjiXSafK",
         "is_owner": {
-            "car_id": 1
+            "car_id": 2
         }
     },
     {
@@ -46,8 +46,10 @@
         "has_drivers_license": true,
         "able_to_drive": true,
         "totp_secret": "gAAAAABoJO7MPBh3Jb2Rel6tiN3Nb1v16qHW5rgQ3LL-gAIT8-NecoLG7wKfqglfdq0Yt6cDUAj49Um-sejlEuHnkYUF0thT9TaSAcS6EfDu4_4lU0JZ8m02KqfI0ru_grJfF_1jz4kh",
-        "is_owner": {
-            "car_id": 2
-        }
+        "has_access_to": [
+            {
+                "car_id": 2
+            }
+        ]
     }
 ]

@@ -110,10 +110,12 @@ def login():
         print("\nLet's start the 2-Factor Authentication.")
         print("2-Factor Authentication System")
         otp = input("Enter the 6-digit OTP: ")
+        timestamp = datetime.now().isoformat()
         new_user = {
             "nr": count,
             "type": "login",
-            "otp": otp
+            "otp": otp,
+            "timestamp": timestamp
         }
         user_id = send_to_server(new_user).get("user_id")
 
@@ -139,12 +141,14 @@ def un_lock(car_id, command, user_id):
 
 
 def un_share_car(user_id, target_id, car_id, command):
+    timestamp = datetime.now().isoformat()
     request = {
         "user_id": user_id,
         "target_id": target_id,
         "car_id": car_id,
         "nr": count,
-        "type": command
+        "type": command,
+        "timestamp": timestamp
     }
 
     result = send_to_server(request)
